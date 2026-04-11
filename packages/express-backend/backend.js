@@ -100,8 +100,14 @@ app.get("/users/:id", (req, res) => {
 
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
-  addUser(userToAdd);
-  res.send();
+  const newUser ={
+    id: Math.floor(Math.random() * 1000000),
+    name: userToAdd.name,
+    job: userToAdd.job,
+  }
+  addUser(newUser);
+
+  res.status(201).send(newUser);
 });
 
 app.delete("/users/:id", (req, res) => {

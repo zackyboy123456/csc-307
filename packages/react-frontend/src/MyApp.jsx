@@ -28,11 +28,20 @@ function MyApp() {
     return promise;
   }
   function updateList(person) { 
-    postUser(person)
-      .then(() => setCharacters([...characters, person]))
-      .catch((error) => {
-        console.log(error);
-      })
+  postUser(person)
+    .then((res) => {
+      if (res.status === 201) {
+        return res.json();
+      }
+    })
+    .then((data) => {
+      if (data) {
+        setCharacters([...characters, data]);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
   function removeOneCharacter(index) {
     const updated = characters.filter((character, i) => {
