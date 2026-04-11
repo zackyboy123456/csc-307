@@ -101,7 +101,7 @@ app.get("/users/:id", (req, res) => {
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
   const newUser ={
-    id: Math.floor(Math.random() * 1000000),
+    id: Math.floor(Math.random() * 1000000).toString(),
     name: userToAdd.name,
     job: userToAdd.job,
   }
@@ -112,11 +112,12 @@ app.post("/users", (req, res) => {
 
 app.delete("/users/:id", (req, res) => {
   const id = req.params.id;
-  const deleted = deleteUserById(id);
+  const index = users.users_list.findIndex((user) => user.id === id);
 
-  if (!deleted) {
+  if (index === -1) {
     res.status(404).send("Resource not found.");
   } else {
+    users.users_list.splice(index, 1);
     res.send();
   }
 });

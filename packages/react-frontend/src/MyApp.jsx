@@ -16,6 +16,11 @@ function MyApp() {
 	  .then((json) => setCharacters(json["users_list"]))
 	  .catch((error) => { console.log(error); });
   }, [] );
+  function deleteUser(id) {
+    return fetch(`http://localhost:8000/users/${id}`, {
+      method: "DELETE",
+    });
+  }
   function postUser(person) {
     const promise = fetch("Http://localhost:8000/users", {
       method: "POST",
@@ -27,27 +32,38 @@ function MyApp() {
 
     return promise;
   }
-  function updateList(person) { 
+  function updateList(person) {
   postUser(person)
     .then((res) => {
       if (res.status === 201) {
         return res.json();
       }
+      throw new Error("Insert failed");
     })
     .then((data) => {
-      if (data) {
-        setCharacters([...characters, data]);
-      }
+      setCharacters((prev) => [...prev, data]);
     })
     .catch((error) => {
       console.log(error);
     });
-  }
+}
   function removeOneCharacter(index) {
-    const updated = characters.filter((character, i) => {
-      return i !== index;
-    });
-    setCharacters(updated);
+    const user = characters[index];
+
+    deleteUser(user.id)
+      .then((res) => {
+        if (res.ok) {
+          const updatedCharacters = [];
+
+          for (let i = 0; i < characters.length; i++) {
+            if (i !== index) {
+              updatedCharacters.push(characters[i]);
+            }
+          }
+          setCharacters(updatedCharacters);
+        }
+      })
+      .catch((error) => console.log(error));
   }
   return (
   <div className="container">
